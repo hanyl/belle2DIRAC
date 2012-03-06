@@ -10,13 +10,22 @@ function initSiteBrowser(){
 
 function renderPage()
 {
-        var panels = [];
-        var mainTreePanels = createDSTree();
-        for( var i=0; i< mainTreePanels.length; i++ )
-        {
-                panels.push( mainTreePanels[i] );
-        }
-        renderInMainViewport( panels );
+
+  var myReader = new Ext.data.ArrayReader({}, [
+               {name: 'site'},
+  ]);
+
+  var store = new Ext.data.Store({
+    reader: myReader
+  });
+
+  var columns = [
+    {header:'',name:'checkBox',id:'checkBox',width:26,sortable:false,dataIndex:'lastChange',hideable:false,fixed:true,menuDisabled:true},
+    {header:'Site',sortable:true,dataIndex:'lastChange',align:'left',hideable:false},
+   ];
+
+  gMainGrid = new Ext.grid.GridPanel( {store: store, columns: columns, region: 'center' } );
+  renderInMainViewport([gMainGrid]);
 
 }
 

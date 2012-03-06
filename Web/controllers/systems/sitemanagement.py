@@ -12,7 +12,7 @@ from dirac.lib.webBase import defaultRedirect
 log = logging.getLogger( __name__ )
 
 
-class SitesController( BaseController ):
+class SitemanagementController( BaseController ):
 
   def index( self ):
     return defaultRedirect()
