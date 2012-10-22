@@ -4,18 +4,6 @@
 
 <%def name="head_tags()">
 ${ h.javascript_link( "/javascripts/systems/sitemanagement/siteBrowser.js" ) }
-<style>
-.allPanel table.x-table-layout {
-    width: 100%;
-    height : 100%;
-}
-
-#action-panel .x-panel {
-	margin-bottom:3px;
-	margin-right:0;
-}
-
-</style>
 </%def>
 
 <%def name="body()">
