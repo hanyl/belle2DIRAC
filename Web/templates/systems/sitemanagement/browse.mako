@@ -7,9 +7,8 @@ ${ h.javascript_link( "/javascripts/systems/sitemanagement/siteBrowser.js" ) }
 
 
 <%def name='body()'>
-
 <script type="text/javascript">
-  initSiteBrowser();
+  initSiteBrowser(${c.usersData});
 </script>
   
 </%def>
