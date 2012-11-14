@@ -1,5 +1,5 @@
 
-function initGrid(sitesData){
+function initGrid(usersData){
 //  Ext.require('Ext.panel.Panel');
 //  Ext.require('Ext.toolbar.TextItem');
 //  Ext.require('Ext.container.Viewport');
@@ -12,7 +12,7 @@ function initGrid(sitesData){
     'Ext.state.*'
   ]);
   Ext.onReady(function(){
-    renderPage(sitesData);
+    renderPage(usersData);
   });
 }
 
@@ -22,7 +22,7 @@ function renderPage(usersData)
 
     Ext.define('User', {
         extend: 'Ext.data.Model',
-        fields: [ 'name', 'status', 'swver', 'comment' ]
+        fields: [ 'name', 'email', 'dn' ]
     });
 
     var userStore = Ext.create('Ext.data.Store', {
@@ -34,7 +34,7 @@ function renderPage(usersData)
     store: userStore,
     width: 400,
     height: 200,
-    title: 'Sites Management',
+    title: 'Application Users',
     region : 'center',
     columns: [
         {
@@ -45,20 +45,15 @@ function renderPage(usersData)
             dataIndex: 'name'
         },
         {
-            text: 'Status',
-            width: 100,
-            dataIndex: 'status',
+            text: 'Email Address',
+            width: 150,
+            dataIndex: 'email',
             hidden: false
         },
         {
-            text: 'basf2 version',
-            width: 100,
-            dataIndex: 'swver'
-        },
-        {
-            text: 'Comment',
+            text: 'DN',
             flex: 1,
-            dataIndex: 'comment'
+            dataIndex: 'dn'
         }
     ]
     });

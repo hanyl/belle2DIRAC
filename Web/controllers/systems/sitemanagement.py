@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import logging
 from dirac.lib.base import *
 #from dirac.lib.diset import getRPCClient, getTransferClient
@@ -19,7 +20,7 @@ class SitemanagementController( BaseController ):
   def index( self ):
     return defaultRedirect()
 
-  def browse( self ):
+  def browseUsers( self ):
     diracAdmin = DiracAdmin()
     names = diracAdmin.csListUsers( 'belle' )['Value']
     users = diracAdmin.csDescribeUsers(names)['Value']
@@ -28,12 +29,24 @@ class SitemanagementController( BaseController ):
       email = users[name]['Email']
       dn = users[name]['DN']
       c.usersData.append({ 'name': name, 'email': email, 'dn': dn })
-    return render( "/systems/sitemanagement/browse.mako" )
+    return render( "/systems/sitemanagement/browseUsers.mako" )
 
   def browseSites( self ):
-#    wmsAdmin = RPCClient( 'WorkloadManagement/WMSAdministrator', timeout = 120 )
-#    result = wmsAdmin.getSiteMask()
-#    c.lista = {"success":['1','444444']}
-#    if result['OK']:
-#      c.lista = {"success":['1','2','4','544']}
-    return render( "/systems/sitemanagement/browse.mako" )
+    # list banned sites
+    diracAdmin = DiracAdmin()
+    bannedSitesHandler = diracAdmin.getBannedSites( printOutput = False )
+    if bannedSitesHandler['OK']:
+      bannedNames = bannedSitesHandler['Value']
+      bannedSites = [ {'name': s, 'status': 'banned',  'swver': '2012-01-01', 'comment': str(diracAdmin.getSiteMaskLogging(s)['Value'][s])} for s in bannedNames]
+    # list not banned sites
+    wmsAdmin = RPCClient( 'WorkloadManagement/WMSAdministrator', timeout = 120 )
+    siteMaskHandler = wmsAdmin.getSiteMask()
+    if siteMaskHandler['OK']:
+      notBannedNames = siteMaskHandler['Value']
+
+    # build list of all sites
+    c.sitesData = []
+    for siteName in notBannedNames:
+      c.sitesData.append({ 'name': siteName, 'status': 'ok', 'swver': '2012-11-02', 'comment': '' })
+    c.sitesData.extend(bannedSites)
+    return render( "/systems/sitemanagement/browseSites.mako" )

@@ -8,7 +8,7 @@ ${ h.javascript_link( "/javascripts/systems/sitemanagement/siteBrowser.js" ) }
 
 <%def name='body()'>
 <script type="text/javascript">
-  initSiteBrowser(${c.usersData});
+  initGrid(${c.sitesData});
 </script>
   
 </%def>
