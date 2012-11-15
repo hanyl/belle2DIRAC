@@ -17,17 +17,17 @@ function initGrid(sitesData){
 }
 
 
-function renderPage(usersData)
+function renderPage(sitesData)
 {
-
+    console.log(sitesData[4]['history']);
     Ext.define('User', {
         extend: 'Ext.data.Model',
-        fields: [ 'name', 'status', 'swver', 'comment' ]
+        fields: [ 'name', 'status', 'swver', 'history' ]
     });
 
     var userStore = Ext.create('Ext.data.Store', {
     model: 'User',
-    data: usersData,
+    data: sitesData,
     });
 
     var panel = Ext.create('Ext.grid.Panel', {
@@ -56,9 +56,9 @@ function renderPage(usersData)
             dataIndex: 'swver'
         },
         {
-            text: 'Comment',
+            text: 'History',
             flex: 1,
-            dataIndex: 'comment'
+            dataIndex: 'history'
         }
     ]
     });
