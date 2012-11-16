@@ -5,6 +5,7 @@ import simplejson
 from datetime import tzinfo, timedelta, datetime
 from dirac.lib.base import *
 from dirac.lib.diset import getRPCClient, getTransferClient
+import dirac.lib.credentials as credentials
 
 from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Utilities import Time, List
@@ -46,8 +47,14 @@ class ProjectsController( BaseController ):
     condDict = {}
     #This is our connection to the Job database
     rpcClient = getRPCClient( "WorkloadManagement/JobMonitoring" )
-    lastMonth =  (datetime.today() - timedelta(365/12)).isoformat()
-    result = rpcClient.getJobGroups(cutDate = lastMonth )
+    # use the last 2 weeks of job data, to speed loading time
+    lastFortnight =  (datetime.today() - timedelta(365/26)).isoformat()
+    username = credentials.getUsername()
+    group = credentials.getSelectedGroup()
+
+    if group != 'dirac_admin':
+        condDict = {'Owner': username}
+    result = rpcClient.getJobGroups( condDict, lastFortnight )
     #result = rpcClient.getJobGroups()
     if not result[ 'OK' ]:
       return result
@@ -75,7 +82,6 @@ class ProjectsController( BaseController ):
       rD['OwnerGroup'] = counters["Value"][0][0]["OwnerGroup"]
       rD['proj_Name'] = record
       data['projects'].append( rD )
-    print data
     return data
 
   def mostRecentTime(self, counters, timename="LastUpdateTime"):
@@ -143,7 +149,6 @@ class ProjectsController( BaseController ):
         colours[3] = colours[3] + status[1]
       else:
         print "statusToColours(): Unknown status: %s", status
-    print colours
     return colours
 
   #XXX - currently this just reschedules a single job
