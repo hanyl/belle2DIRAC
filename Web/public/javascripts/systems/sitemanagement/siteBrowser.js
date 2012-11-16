@@ -19,7 +19,7 @@ function initGrid(sitesData){
 
 function renderPage(sitesData)
 {
-    console.log(sitesData[4]['history']);
+    console.log(sitesData);
     Ext.define('User', {
         extend: 'Ext.data.Model',
         fields: [ 'name', 'status', 'swver', 'history' ]
@@ -39,14 +39,14 @@ function renderPage(sitesData)
     columns: [
         {
             text: 'Name',
-            width: 100,
+            width: 150,
             sortable: false,
             hideable: false,
             dataIndex: 'name'
         },
         {
             text: 'Status',
-            width: 100,
+            width: 70,
             dataIndex: 'status',
             hidden: false
         },

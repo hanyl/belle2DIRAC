@@ -2,7 +2,7 @@
 
 import logging
 from dirac.lib.base import *
-import simplejson
+# import simplejson
 #from dirac.lib.diset import getRPCClient, getTransferClient
 #from dirac.lib.credentials import authorizeAction
 #from DIRAC import S_OK, S_ERROR, gLogger
@@ -33,22 +33,12 @@ class SitemanagementController(BaseController):
     return render("/systems/sitemanagement/browseUsers.mako")
 
   def browseSites(self):
-    c.sitesData = []
-    # list banned sites
-    diracAdmin = DiracAdmin()
-    bannedSitesHandler = diracAdmin.getBannedSites(printOutput=False)
-    if bannedSitesHandler['OK']:
-      bannedNames = bannedSitesHandler['Value']
-      history = [diracAdmin.getSiteMaskLogging(s)['Value'][s] for s in bannedNames][::-1]
-      bannedSites = [{'name': s, 'status': 'banned',  'swver': '2012-01-01', 'history': simplejson.dumps(history)}]
-    # list not banned sites
-    wmsAdmin = RPCClient('WorkloadManagement/WMSAdministrator', timeout=120)
-    siteMaskHandler = wmsAdmin.getSiteMask()
-    if siteMaskHandler['OK']:
-      notBannedNames = siteMaskHandler['Value']
-    for siteName in notBannedNames:
-      history = diracAdmin.getSiteMaskLogging(siteName)['Value'][siteName][::-1]
-      c.sitesData.append({'name': siteName, 'status': 'ok', 'swver': '2012-11-02', 'history': simplejson.dumps(history)})
-    # build list of all sites
-    c.sitesData.extend(bannedSites)
+    c.sitesData = self.fetchSites()['Value']
     return render("/systems/sitemanagement/browseSites.mako")
+
+  # @jsonify
+  def fetchSites(self):
+    siteService = RPCClient('Framework/SiteManagement', timeout=300)
+    sites = siteService.getSites()
+    # sites = [{'status': 'ok', 'swver': '2012-11-02', 'name': 'LCG.KEK2.jp', 'history': '[["Active", "2012-08-02 18:45:21", "hideki", "Does not work"], ["Banned", "2012-08-02 16:55:15", "ricardo", "Does not work"], ["Active", "2012-08-02 16:20:55", "ricardo", "Does not work"], ["Banned", "2012-08-02 15:48:44", "ricardo", "Does not work"], ["Active", "2012-08-02 11:27:01", "ricardo", "Here we go again"], ["Banned", "2012-08-02 05:37:20", "ricardo", "until the GPFS issues are solved"], ["Active", "2012-07-20 11:47:41", "/C=JP/O=KEK/OU=CRC/CN=host/dirac.cc.kek.jp", "Lets try"]]'}, {'status': 'ok', 'swver': '2012-11-02', 'name': 'LCG.KIT.de', 'history': '[["Active", "2012-08-01 19:53:48", "ricardo", "try to add more resources"]]'}]
+    return sites

@@ -10,6 +10,7 @@ from DIRAC import S_OK, S_ERROR, gLogger
 from DIRAC.Core.Utilities import Time, List
 from DIRAC.AccountingSystem.Client.ReportsClient import ReportsClient
 from dirac.lib.webBase import defaultRedirect
+from DIRAC.WorkloadManagementSystem.DB.JobDB import JobDB
 
 log = logging.getLogger( __name__ )
 
@@ -45,7 +46,9 @@ class ProjectsController( BaseController ):
     condDict = {}
     #This is our connection to the Job database
     rpcClient = getRPCClient( "WorkloadManagement/JobMonitoring" )
-    result = rpcClient.getJobGroups()
+    lastMonth =  (datetime.today() - timedelta(365/12)).isoformat()
+    result = rpcClient.getJobGroups(cutDate = lastMonth )
+    #result = rpcClient.getJobGroups()
     if not result[ 'OK' ]:
       return result
     data = { 'numRecords' : len(result[ 'Value' ]), 'projects' : [] }
@@ -72,6 +75,7 @@ class ProjectsController( BaseController ):
       rD['OwnerGroup'] = counters["Value"][0][0]["OwnerGroup"]
       rD['proj_Name'] = record
       data['projects'].append( rD )
+    print data
     return data
 
   def mostRecentTime(self, counters, timename="LastUpdateTime"):
@@ -123,8 +127,8 @@ class ProjectsController( BaseController ):
     B = progress
     W = nothing!
     """
-    red_states = ['Failed']
-    green_states = ['Done']
+    red_states = ['Failed', 'Killed']
+    green_states = ['Done', 'Completed']
     blue_states = ['Running']
     white_states = ['Submitted', 'Waiting', 'Matched','Checking']
     colours = [0,0,0,0] #RGB!
@@ -138,8 +142,8 @@ class ProjectsController( BaseController ):
       elif status[0]["Status"] in white_states:
         colours[3] = colours[3] + status[1]
       else:
-        print "statusToColours(): Unknown status!"
-
+        print "statusToColours(): Unknown status: %s", status
+    print colours
     return colours
 
   #XXX - currently this just reschedules a single job
