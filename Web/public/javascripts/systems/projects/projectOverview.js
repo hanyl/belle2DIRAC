@@ -221,6 +221,10 @@ function jump(project, status){
     var post_req = '<form id="redirform" action="' + url + '" method="POST" >';
     post_req = post_req + '<input type="hidden" name="prod" value="' + project + '">';
     post_req = post_req + '<input type="hidden" name="status" value="' + status + '">';
+    post_req = post_req + '<input type="hidden" name="start" value="0">';
+    post_req = post_req + '<input type="hidden" name="sort" value="JobID DESC">';
+    post_req = post_req + '<input type="hidden" name="limit" value="25">';
+    post_req = post_req + '<input type="hidden" name="getStat" value="Status">';
     post_req = post_req + '</form>';
     document.body.innerHTML = document.body.innerHTML + post_req;
     var form = document.getElementById('redirform');

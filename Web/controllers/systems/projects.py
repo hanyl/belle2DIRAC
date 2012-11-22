@@ -48,7 +48,8 @@ class ProjectsController( BaseController ):
     #This is our connection to the Job database
     rpcClient = getRPCClient( "WorkloadManagement/JobMonitoring" )
     # use the last 2 weeks of job data, to speed loading time
-    lastFortnight =  (datetime.today() - timedelta(365/26)).isoformat()
+    #lastFortnight =  (datetime.today() - timedelta(365/26)).isoformat()
+    lastFortnight =  (datetime.today() - timedelta(365/360)).isoformat()
     username = credentials.getUsername()
     group = credentials.getSelectedGroup()
 
